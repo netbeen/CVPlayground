@@ -109,6 +109,10 @@ void motionToColor(Mat flow, Mat &color) {
 	}
 }
 
+void separateNrom(Mat& flow){
+
+}
+
 void opticalFlow() {
 	VideoCapture cap;
 	cap.open(0);
@@ -130,7 +134,7 @@ void opticalFlow() {
 		imshow("original", frame);
 
 		if (prevgray.data) {
-			calcOpticalFlowFarneback(prevgray, gray, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
+			calcOpticalFlowFarneback(prevgray, gray, flow, 0.1, 1, 50, 3, 7, 1.5, 0);
 			motionToColor(flow, motion2color);
 			imshow("flow", motion2color);
 		}
