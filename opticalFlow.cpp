@@ -17,6 +17,7 @@
 #include <iostream>
 #include "opencv2/opencv.hpp"
 #include "ESR.hpp"
+#include <cmath>
 
 using namespace cv;
 using namespace std;
@@ -109,8 +110,17 @@ void motionToColor(Mat flow, Mat &color) {
 	}
 }
 
-void separateNrom(Mat& flow){
-
+void separateNromAndAngle(const Mat& flow, Mat& norm, Mat& phaseAngle){
+	for(int rowIndex = 0; rowIndex<flow.rows; ++rowIndex){
+		for(int columnIndex = 0; columnIndex<flow.cols; ++columnIndex){
+			Vec2f flow_at_point = flow.at<Vec2f>(rowIndex, columnIndex);
+			float normValue = std::sqrt(std::pow(flow_at_point[0],2)+std::pow(flow_at_point[1],2));
+			norm.at<float>(rowIndex, columnIndex)=normValue;
+			float angleValue = atan2(flow_at_point[0],flow_at_point[1]);
+			uchar angleValueUchar = static_cast<uchar>(((angleValue/3.1415926*180)/180*127)+127);		//将float的-pi到pi的值映射到0-255的uchar来显示
+			phaseAngle.at<uchar>(rowIndex, columnIndex)=angleValueUchar;
+		}
+	}
 }
 
 void opticalFlow() {
@@ -133,10 +143,16 @@ void opticalFlow() {
 		cvtColor(frame, gray, CV_BGR2GRAY);
 		imshow("original", frame);
 
+		Mat norm(frame.rows,frame.cols, CV_32FC1);	//声明光流模的矩阵
+		Mat phaseAngle(frame.rows,frame.cols, CV_8UC1);
+
 		if (prevgray.data) {
 			calcOpticalFlowFarneback(prevgray, gray, flow, 0.1, 1, 50, 3, 7, 1.5, 0);
 			motionToColor(flow, motion2color);
 			imshow("flow", motion2color);
+			separateNromAndAngle(flow, norm,phaseAngle);
+			imshow("norm", norm);
+			imshow("phaseAngle", phaseAngle);
 		}
 		if (waitKey(10) >= 0)
 			break;
