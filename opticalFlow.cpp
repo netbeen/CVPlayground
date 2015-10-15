@@ -148,8 +148,8 @@ void opticalFlow() {
 
 		if (prevgray.data) {
 			calcOpticalFlowFarneback(prevgray, gray, flow, 0.1, 1, 50, 3, 7, 1.5, 0);
-			motionToColor(flow, motion2color);
-			imshow("flow", motion2color);
+			/*motionToColor(flow, motion2color);
+			imshow("flow", motion2color);*/
 			separateNromAndAngle(flow, norm,phaseAngle);
 			imshow("norm", norm);
 			imshow("phaseAngle", phaseAngle);

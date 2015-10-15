@@ -33,6 +33,7 @@ public:
 
 int train();
 int test();
+void fourierTrain();
 bool detectFace(Mat& grayImg, CascadeClassifier& cascade, double scale, BoundingBox& boundingBox);
 
 class Fern {
